@@ -1,0 +1,40 @@
+/mainframe-jcl-migration . jcl/JBCJRIS.jcl CJRIS02 migration/JBCJRIS/CJRIS02
+
+Use mainframe-migration.json como fonte de verdade e mainframe-model-routing.json
+para as rotas SIMPLE, MEDIUM e COMPLEX. Use scope program-only e
+target-language: pyspark.
+
+O alvo aprovado para desenho e AWS Glue PySpark, S3, Glue Catalog e Apache
+Iceberg. Os arquivos de teste local estao em input/, sao CSV UTF-8 com header e
+separador `;`. O Golden autoritativo devera estar em
+golden-dataset/cjris02-expected.csv e o manifesto e validation/cjris02.json.
+
+Primeiro execute campaign init e next para CJRIS02, preflight, reindexacao,
+grafo, callers, impacto, resolucao de copybooks, extracao de SQL e regras, e
+gere exatamente uma capsula program-only. Pare se continuationAllowed=false.
+
+Produza o semantic brief, source-to-target map e target architecture. Nao use o
+skeleton COBOL como implementacao final e nao invente semantica ausente. Pare no
+target-design review e aguarde minha aprovacao antes de escrever IR executavel
+ou codigo de producao.
+
+O desenho deve manter a regra de negocio em transform_frames(), sem conhecer
+storage fisico. Em producao, leia a tabela cjris02_input do Glue Catalog e grave
+cjris02_result em Iceberg/S3, com rejeicoes tipadas em S3. Localmente, use uma
+SparkSession local, schema explicito e o mesmo transform_frames() para ler os
+CSVs de input/. Materialize a saida local em um unico arquivo CSV ordenado para
+que golden_validate possa comparar todas as linhas e celulas.
+
+Nao declare equivalencia usando os CSVs de exemplo deste template. Exija um
+Golden capturado do mainframe ou de implementacao equivalente verificada,
+registre hashes e proveniencia, rode validation/cjris02.json com golden_validate
+e somente conclua a campanha com --require-golden apos PASS.
+
+PROMPT DE CONTINUACAO APOS EU APROVAR O DESENHO:
+
+Aprovo o semantic brief e o target design revisados. Substitua o IR PARTIAL por
+IR tipado e EXECUTABLE, valide com validate_relational_ir, compile com
+ir_to_pyspark, implemente os launchers Glue e local, execute testes focados,
+gere o CSV actual unico e rode golden_validate. Liste claramente qualquer
+limitacao de IAM, Lake Formation, Glue bookmarks, conectores ou configuracao
+Iceberg que ainda dependa do deployment.

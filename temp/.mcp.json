@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "mainframe-toolkit": {
+      "type": "stdio",
+      "command": "mainframe-toolkit",
+      "args": ["mcp", "serve"]
+    }
+  }
+}

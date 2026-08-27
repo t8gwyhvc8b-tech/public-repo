@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "expected": "golden-dataset/cjris02-expected.csv",
+  "actual": "migration/JBCJRIS/CJRIS02/validation/cjris02-actual.csv",
+  "policy": "strict",
+  "csv": {
+    "encoding": "utf-8",
+    "delimiter": ";",
+    "quoteChar": "\"",
+    "escapeChar": null,
+    "hasHeader": true,
+    "nullValue": ""
+  },
+  "reports": {
+    "summary": "migration/JBCJRIS/CJRIS02/reports/golden-summary.json",
+    "divergences": "migration/JBCJRIS/CJRIS02/reports/golden-divergences.jsonl"
+  }
+}

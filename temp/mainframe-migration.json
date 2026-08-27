@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "sourceEncoding": "utf-8",
+  "sources": {
+    "cobol": {
+      "primary": ["cobol"],
+      "fallback": [],
+      "extensions": [".cbl", ".cob", ".cobol"]
+    },
+    "copybook": {
+      "primary": ["copybooks"],
+      "fallback": [],
+      "extensions": [".cpy", ".copy"]
+    },
+    "jcl": {
+      "primary": ["jcl"],
+      "fallback": [],
+      "extensions": [".jcl", ".proc", ".prc"]
+    }
+  },
+  "resolution": {
+    "knownExternalPrograms": [],
+    "knownExternalCopybooks": [],
+    "knownExternalUtilities": [],
+    "allowWholeWorkspaceFallback": false
+  },
+  "generation": {
+    "todoPrefix": "TODO(mainframe-migration):"
+  },
+  "environment": {},
+  "targetCapabilities": {
+    "schemaVersion": 1,
+    "defaults": {
+      "database.relational": {
+        "strategy": "lakehouse_table",
+        "provider": "apache-iceberg",
+        "adapter": "builtin.apache_iceberg"
+      },
+      "load.bulk_records": {
+        "strategy": "lakehouse_load",
+        "provider": "apache-iceberg",
+        "adapter": "builtin.apache_iceberg"
+      },
+      "operations.audit": {
+        "strategy": "structured_logging",
+        "provider": "stdout",
+        "adapter": "builtin.stdout_logging"
+      },
+      "orchestration.batch": {
+        "strategy": "step_functions",
+        "provider": "aws",
+        "adapter": "builtin.batch_orchestration"
+      },
+      "storage.indexed_records": {
+        "strategy": "lakehouse_table",
+        "provider": "apache-iceberg",
+        "adapter": "builtin.apache_iceberg"
+      },
+      "storage.sequential_records": {
+        "strategy": "object_storage",
+        "provider": "aws-s3",
+        "adapter": "builtin.aws_s3"
+      },
+      "storage.versioned_generation": {
+        "strategy": "snapshot_table",
+        "provider": "apache-iceberg",
+        "adapter": "builtin.apache_iceberg"
+      },
+      "transform.sort_merge": {
+        "strategy": "pyspark",
+        "provider": "aws-glue",
+        "adapter": "builtin.pyspark_sort"
+      }
+    },
+    "instances": {},
+    "selectors": []
+  }
+}
