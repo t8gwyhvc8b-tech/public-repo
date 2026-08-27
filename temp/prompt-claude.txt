@@ -1,9 +1,8 @@
-Use a skill mainframe-jcl-migration para migrar todo este repositorio no
-workspace `.`.
+/mainframe-jcl-migration . jcl/JBCJRIS.jcl
 
-Descubra todos os JCLs configurados e trate cada um como uma campanha full-job,
-sem pre-selecionar PROGRAM-ID. Use target-language: pyspark e grave cada job em
-migration/<JOB-NAME>.
+Migre este JCL inteiro em full-job mode, incluindo todos os programas locais que
+pertencem ao job, sem pre-selecionar PROGRAM-ID. Use target-language: pyspark e
+target-dir migration/JBCJRIS.
 
 A arquitetura alvo e AWS Glue PySpark, S3, Glue Catalog e Apache Iceberg. A
 implementacao tambem deve executar localmente com PySpark, lendo os arquivos de
@@ -15,4 +14,4 @@ Exija Golden PASS para concluir cada unidade.
 
 Use mainframe-migration.json e mainframe-model-routing.json. Siga integralmente
 os gates, evidencias e criterios da skill. Antes da implementacao, apresente o
-plano consolidado do repositorio e aguarde minha aprovacao do target design.
+plano consolidado do job e aguarde minha aprovacao do target design.
