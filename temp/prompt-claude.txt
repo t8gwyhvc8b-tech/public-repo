@@ -1,40 +1,62 @@
-/mainframe-jcl-migration . jcl/JBCJRIS.jcl CJRIS02 migration/JBCJRIS/CJRIS02
+Use a skill mainframe-jcl-migration para migrar todo este repositorio, usando o
+workspace `.`. Este pedido cobre todos os JCLs e todos os programas locais
+alcancaveis, nao apenas CJRIS02 e nao apenas um PROGRAM-ID isolado.
 
 Use mainframe-migration.json como fonte de verdade e mainframe-model-routing.json
-para as rotas SIMPLE, MEDIUM e COMPLEX. Use scope program-only e
-target-language: pyspark.
+para as rotas SIMPLE, MEDIUM e COMPLEX. O alvo e AWS Glue PySpark, S3, Glue
+Catalog e Apache Iceberg. Os inputs locais ficam em input/, em CSV UTF-8 com
+header e separador `;`. Os Golden Datasets autoritativos ficam em
+golden-dataset/ e seus manifestos ficam em validation/.
 
-O alvo aprovado para desenho e AWS Glue PySpark, S3, Glue Catalog e Apache
-Iceberg. Os arquivos de teste local estao em input/, sao CSV UTF-8 com header e
-separador `;`. O Golden autoritativo devera estar em
-golden-dataset/cjris02-expected.csv e o manifesto e validation/cjris02.json.
+Primeiro inventarie todos os JCLs configurados em sources.jcl. Resolva nomes
+ambiguos antes de continuar. Para cada JCL descoberto, inicialize uma campanha
+independente em full-job mode, com target-dir migration/<JOB-NAME>,
+target-language: pyspark e um worker por padrao. Nao pre-selecione PROGRAM-ID.
 
-Primeiro execute campaign init e next para CJRIS02, preflight, reindexacao,
-grafo, callers, impacto, resolucao de copybooks, extracao de SQL e regras, e
-gere exatamente uma capsula program-only. Pare se continuationAllowed=false.
+Dentro de cada campanha, ordene deterministicamente todos os programas locais
+por risco/complexidade e migre um por vez com scope program-only. Depois de
+concluir uma unidade, reclame imediatamente a proxima sem pedir que eu escolha
+entre candidatos ja ordenados. Registre blockers especificos e continue jobs e
+programas nao afetados; pare somente diante de blocker global ou input humano
+obrigatorio. Evite converter duas vezes programas compartilhados: consulte o
+catalogo e reutilize somente artefatos publicados e comprovadamente compativeis.
 
-Produza o semantic brief, source-to-target map e target architecture. Nao use o
-skeleton COBOL como implementacao final e nao invente semantica ausente. Pare no
-target-design review e aguarde minha aprovacao antes de escrever IR executavel
-ou codigo de producao.
+Para cada unidade, execute preflight, reindexacao, grafo, callers, impacto,
+resolucao de copybooks, extracao de SQL e regras, e gere exatamente uma capsula
+program-only. Pare sempre que continuationAllowed=false. Nao invente copybooks,
+PROCs, layouts, regras, compilador, encoding ou semantica ausente.
 
-O desenho deve manter a regra de negocio em transform_frames(), sem conhecer
-storage fisico. Em producao, leia a tabela cjris02_input do Glue Catalog e grave
-cjris02_result em Iceberg/S3, com rejeicoes tipadas em S3. Localmente, use uma
-SparkSession local, schema explicito e o mesmo transform_frames() para ler os
-CSVs de input/. Materialize a saida local em um unico arquivo CSV ordenado para
-que golden_validate possa comparar todas as linhas e celulas.
+Antes de implementar, produza semantic brief, source-to-target map e target
+architecture para cada unidade, mais o desenho de orquestracao de cada job. Nao
+use skeleton COBOL/JCL como implementacao final. Apresente o plano consolidado
+do repositorio, com jobs, programas, dependencias, ordem, concluidos, pendentes
+e bloqueados, e aguarde minha aprovacao no target-design review.
 
-Nao declare equivalencia usando os CSVs de exemplo deste template. Exija um
-Golden capturado do mainframe ou de implementacao equivalente verificada,
-registre hashes e proveniencia, rode validation/cjris02.json com golden_validate
-e somente conclua a campanha com --require-golden apos PASS.
+Depois da aprovacao, mantenha a regra de negocio de cada unidade em
+transform_frames(), independente de storage. Para cada job PySpark completo,
+componha os transforms em uma unica SparkSession, passe DataFrames em processo
+entre programas e materialize somente inputs externos, outputs finais e
+rejeicoes obrigatorias. Em producao use Glue Catalog/S3/Iceberg. Localmente leia
+os CSVs de input/ com schemas explicitos e o mesmo codigo de transformacao.
+
+Gere um manifesto Golden por output final autoritativo. O arquivo
+validation/cjris02.json e apenas o primeiro exemplo e nao representa sozinho a
+validacao do repositorio inteiro. Materialize cada output local em um arquivo
+CSV unico e deterministicamente ordenado, rode golden_validate e somente
+conclua uma unidade com --require-golden apos PASS. Nao declare equivalencia a
+partir de dados sinteticos.
+
+Ao final, gere e teste a orquestracao completa de cada JCL, execute cada pipeline
+com pelo menos dois conjuntos isolados de inputs e produza um relatorio final
+consolidado com evidencias, digests, testes, Golden manifests, limitacoes AWS e
+todos os TODOs ou blockers restantes.
 
 PROMPT DE CONTINUACAO APOS EU APROVAR O DESENHO:
 
-Aprovo o semantic brief e o target design revisados. Substitua o IR PARTIAL por
-IR tipado e EXECUTABLE, valide com validate_relational_ir, compile com
-ir_to_pyspark, implemente os launchers Glue e local, execute testes focados,
-gere o CSV actual unico e rode golden_validate. Liste claramente qualquer
-limitacao de IAM, Lake Formation, Glue bookmarks, conectores ou configuracao
-Iceberg que ainda dependa do deployment.
+Aprovo o plano consolidado, os semantic briefs e os target designs revisados.
+Prossiga em ordem deterministica por campanha e unidade: escreva IR tipado e
+EXECUTABLE apenas onde a semantica estiver comprovada, valide com
+validate_relational_ir, compile com ir_to_pyspark, implemente os launchers Glue
+e locais, execute testes focados e os Golden Datasets finais. Liste claramente
+qualquer limitacao de IAM, Lake Formation, Glue bookmarks, conectores ou
+configuracao Iceberg que ainda dependa do deployment.
