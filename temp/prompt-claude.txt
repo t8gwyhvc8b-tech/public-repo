@@ -14,6 +14,4 @@ Nao crie nem exija Golden para saidas intermediarias entre os programas; valide
 essas unidades com contratos e testes focados. Exija Golden PASS da saida final
 antes de declarar o job concluido.
 
-Use mainframe-migration.json e mainframe-model-routing.json. Siga integralmente
-os gates, evidencias e criterios da skill. Antes da implementacao, apresente o
-plano consolidado do job e aguarde minha aprovacao do target design.
+Use mainframe-migration.json como fonte de verdade e siga integralmente a skill.
