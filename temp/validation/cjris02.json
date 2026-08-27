@@ -10,9 +10,5 @@
     "escapeChar": null,
     "hasHeader": true,
     "nullValue": ""
-  },
-  "reports": {
-    "summary": "migration/JBCJRIS/CJRIS02/reports/golden-summary.json",
-    "divergences": "migration/JBCJRIS/CJRIS02/reports/golden-divergences.jsonl"
   }
 }
