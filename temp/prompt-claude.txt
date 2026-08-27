@@ -8,9 +8,11 @@ A arquitetura alvo e AWS Glue PySpark, S3, Glue Catalog e Apache Iceberg. A
 implementacao tambem deve executar localmente com PySpark, lendo os arquivos de
 input/ como CSV UTF-8, com header e separador `;`.
 
-Os Golden Datasets autoritativos ficam em golden-dataset/. Use os manifestos de
-validation/ e crie um manifesto adicional para cada output final descoberto.
-Exija Golden PASS para concluir cada unidade.
+Existe Golden Dataset autoritativo somente para a saida final do JCL. Use
+golden-dataset/ e o manifesto em validation/ para validar a pipeline completa.
+Nao crie nem exija Golden para saidas intermediarias entre os programas; valide
+essas unidades com contratos e testes focados. Exija Golden PASS da saida final
+antes de declarar o job concluido.
 
 Use mainframe-migration.json e mainframe-model-routing.json. Siga integralmente
 os gates, evidencias e criterios da skill. Antes da implementacao, apresente o
