@@ -15,6 +15,7 @@
 | codigoBacen | String (S) |
 | funcionalSolicitante | String (S) |
 | statusSolicitacao | String (S) |
+| statusCompetencias | Map (M) |
 | tipoSolicitacao | String (S) |
 | dataSolicitacao | String (S) |
 | dataInicio | String (S) |
@@ -30,6 +31,14 @@
 - `dataSolicitacao`: ISO 8601 em UTC (`YYYY-MM-DDTHH:mm:ss.SSSZ`).
 - `dataInicio` e `dataFim`: `YYYY-MM-DD`.
 - `ttl`: Unix timestamp em segundos, somente para eventuais, criação + 2 meses.
+
+### Status por competência
+- `statusSolicitacao`: status geral da solicitação, independente dos status individuais.
+- `statusCompetencias`: atributo exclusivo das solicitações eventuais, com chaves no formato `YYYY-MM` e valores do tipo String (S).
+- Na criação da solicitação, o backend gera todas as competências entre `dataInicio` e `dataFim`, inclusive, inicializando cada status como `PENDENTE`. O mapa é persistido junto com a solicitação em um único `PutItem`.
+- O frontend envia o intervalo de datas, sem precisar montar o mapa.
+- O executor informa o ID da solicitação e os status das competências. Cada competência pode ser atualizada atomicamente via `UpdateItem`, sem leitura prévia, usando `SET statusCompetencias.#competencia = :status`, com alias para a chave do mapa.
+- O `GSI_STATUS` continua indexando exclusivamente `statusSolicitacao`.
 
 ## 3. GSIs
 
